@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import org.taktik.freehealth.middleware.dto.MergeKeystoreRequestBody
+import org.taktik.freehealth.middleware.dto.MergeKeystoresRequestBody
 import org.taktik.freehealth.middleware.dto.UUIDType
 import org.taktik.freehealth.middleware.service.SSOService
 import org.taktik.freehealth.middleware.service.STSService
@@ -91,6 +91,6 @@ class STSController(private val stsService: STSService, private val ssoService: 
     ) = ssoService.getOauth2Token(tokenId, keystoreId, passPhrase, cbe, kid)
 
     @PostMapping("/keystore/merge", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE], consumes = [MediaType.APPLICATION_JSON_UTF8_VALUE])
-    fun mergeKeystores(@RequestBody request: MergeKeystoreRequestBody) = stsService.mergeKeystores(request.newKeystore, request.oldKeystore, request.newPassword, request.oldPassword)
+    fun mergeKeystores(@RequestBody request: MergeKeystoresRequestBody) = stsService.mergeKeystores(request.newKeystore, request.oldKeystore, request.newPassword, request.oldPassword)
 
 }

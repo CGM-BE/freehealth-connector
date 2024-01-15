@@ -51,9 +51,11 @@ import org.taktik.freehealth.middleware.pkcs11.remote.RemoteKeystore
 import org.taktik.freehealth.middleware.service.RemoteKeystoreService
 import org.taktik.freehealth.middleware.service.STSService
 import org.w3c.dom.Element
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.StringReader
+import java.io.StringWriter
 import java.security.KeyStore
-import java.security.UnrecoverableKeyException
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -630,15 +632,15 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
             throw determineIOExceptionMessage(exception, "new keystore")
         }
 
-        val source = KeyStore.getInstance("pkcs12")
+        val sourceKeystore = KeyStore.getInstance("pkcs12")
 
         try {
-            source.load(oldKeystoreBytes.inputStream(), oldPassword.toCharArray())
+            sourceKeystore.load(oldKeystoreBytes.inputStream(), oldPassword.toCharArray())
         } catch (exception: IOException) {
             throw determineIOExceptionMessage(exception, "old keystore")
         }
 
-        val aliases = source.aliases()
+        val aliases = sourceKeystore.aliases()
 
         while (aliases.hasMoreElements()) {
             val alias = aliases.nextElement()
@@ -647,7 +649,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
                 continue;
             }
 
-            val cert = source.getCertificate(alias)
+            val cert = sourceKeystore.getCertificate(alias)
             targetKeystore.setCertificateEntry(alias, cert)
         }
 

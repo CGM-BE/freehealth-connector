@@ -7,6 +7,6 @@ import java.io.Serializable
  * @author Bram Swinnen
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class MergeKeystoreRequestBody(var newKeystore: String, var oldKeystore: String, var newPassword: String, var oldPassword: String) : Serializable {
+class MergeKeystoresRequestBody(var newKeystore: String, var oldKeystore: String, var newPassword: String, var oldPassword: String) : Serializable {
 
 }
