@@ -46,6 +46,7 @@ import org.taktik.connector.technical.service.sts.utils.SAMLHelper
 import org.taktik.connector.technical.utils.CertificateParser
 import org.taktik.freehealth.middleware.domain.sts.SamlTokenResult
 import org.taktik.freehealth.middleware.dto.CertificateInfo
+import org.taktik.freehealth.middleware.dto.MergeKeystoresResponseDto
 import org.taktik.freehealth.middleware.exception.MissingKeystoreException
 import org.taktik.freehealth.middleware.pkcs11.remote.RemoteKeystore
 import org.taktik.freehealth.middleware.service.RemoteKeystoreService
@@ -607,7 +608,7 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         return result;
     }
 
-    override fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): ByteArray {
+    override fun mergeKeystores(newKeystore: String, oldKeystore: String, newPassword: String, oldPassword: String): MergeKeystoresResponseDto {
         val newKeystoreBytes: ByteArray = try {
             Base64.getDecoder().decode(newKeystore)
         } catch (exception: IllegalArgumentException) {
@@ -656,7 +657,8 @@ class STSServiceImpl(val keystoresMap: IMap<UUID, ByteArray>, val tokensMap: IMa
         val output = ByteArrayOutputStream()
         targetKeystore.store(output, newPassword.toCharArray())
 
-        return output.toByteArray()
+        val retval = Base64.getEncoder().encodeToString(output.toByteArray())
+        return MergeKeystoresResponseDto(mergedCertificate = retval)
     }
 
     fun determineIOExceptionMessage(exception: IOException, keystoreName: String): ResponseStatusException {
